@@ -1,7 +1,10 @@
+extern crate chrono;
+
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::ffi::OsStr;
+use chrono::prelude::*;
 
 fn main() {
     let mut args = env::args();
@@ -32,8 +35,11 @@ fn main() {
     for file in file_paths {
         let file_path = PathBuf::from(file.clone());
         if file_path.extension() == Some(OsStr::new("mp4")) {
-            let file_name = file_path.file_name().unwrap().to_str().unwrap();
-            let _ = fs::copy(file, output_path.clone() + "/" + file_name);
+            let file_name = file_path.file_stem().unwrap().to_str().unwrap();
+            let mut date = Utc.datetime_from_str(&file_name, "%Y%m%d_%H%M%S").unwrap();
+            let dallas_date = date.with_timezone(&FixedOffset::east(-5*3600));
+            let dallas_date_string = dallas_date.format("%Y%m%d_%H%M%S").to_string();
+            let _ = fs::copy(file, output_path.clone() + "/" + &dallas_date_string + ".mp4");
         }
     }
 }
