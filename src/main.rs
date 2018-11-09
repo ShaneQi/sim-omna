@@ -108,7 +108,7 @@ fn main() {
     //     file_a_name.cmp(&file_b_name)
     // });
 
-    if !PathBuf::from(output_path_string).exists() {
+    if len > 0 && !PathBuf::from(output_path_string).exists() {
         let _ = fs::create_dir_all(output_path_string);
     }
     for file_path in all_files {
@@ -159,7 +159,8 @@ fn all_files(path: PathBuf) -> Vec<PathBuf> {
 }
 
 fn is_omna_file(path: &PathBuf) -> bool {
-    if let Some(_) = path.file_stem()
+    if let Some(_) = path
+        .file_stem()
         .and_then(|stem| stem.to_str())
         .and_then(|path_str| Utc.datetime_from_str(path_str, &omna_date_pattern()).ok())
     {
